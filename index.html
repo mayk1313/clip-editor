@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gerenciador de Clipes</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+  <main class="app-shell">
+    <header class="masthead">
+      <div><p class="kicker">Gerenciamento de vídeos</p><h1>Gerenciador de Clipes</h1><p class="intro">Revise, ajuste e exporte os clipes salvos.</p></div>
+      <label class="import-button" for="json-file">Importar JSON<input id="json-file" type="file" accept="application/json,.json" hidden></label>
+    </header>
+
+    <section class="import-panel" id="import-panel">
+      <label for="json-text">Cole o JSON de clipes salvos ou o <em>episodes.json</em></label>
+      <textarea id="json-text" spellcheck="false" placeholder='{ "format": "pato7s-saved-clips", "clips": [ ... ] }'></textarea>
+      <p id="import-message" class="hint">Cole o conteúdo completo do JSON ou use “Importar JSON”.</p>
+    </section>
+
+    <section id="workspace" class="workspace" hidden>
+      <div class="editing-column">
+        <details id="editor-details" class="clip-adjuster">
+          <summary><span><span class="kicker">Edição de clipe</span><strong>Revisar e ajustar corte</strong></span><span class="adjuster-summary-note">Abrir player</span></summary>
+        <div class="player-frame" id="player-frame">
+          <div id="youtube-player" class="youtube-player"></div>
+          <div class="player-empty" id="player-empty">Selecione um clipe da fila para abrir o vídeo.</div>
+          <div class="range-readout" id="range-readout" hidden><span id="range-kind">Edição</span><strong id="range-time">00:00:00 — 00:00:00</strong></div>
+        </div>
+
+        <div class="preview-bar">
+          <div class="preview-choice" role="group" aria-label="Trecho para reproduzir">
+            <button id="play-original" class="active" type="button">Rodar original</button>
+            <button id="play-edited" type="button">Rodar edição</button>
+          </div>
+          <div class="preview-choice" role="group" aria-label="Fim do trecho">
+            <button id="mode-loop" class="active" type="button">Repetir trecho</button>
+            <button id="mode-continue" type="button">Seguir vídeo</button>
+          </div>
+          <button id="seek-clip" class="quiet-action" type="button">Ir ao início</button>
+        </div>
+
+        <section class="cut-panel" aria-labelledby="cut-title">
+          <div class="panel-heading"><div><p class="kicker">Clipe selecionado</p><h2 id="cut-title">Selecione um clipe</h2></div><span id="changed-badge" class="changed-badge" hidden>Editado</span></div>
+          <div class="original-reference">
+            <div><span>Início no JSON</span><strong id="original-start">—</strong></div>
+            <div><span>Fim no JSON</span><strong id="original-end">—</strong></div>
+          </div>
+          <div class="edit-fields">
+            <label class="field-name">Nome do arquivo<input id="clip-name" type="text" autocomplete="off"></label>
+            <label>Início<div class="time-input"><input id="clip-start" type="text" inputmode="decimal" placeholder="00:00:00"><button id="capture-start" type="button">Pegar tempo atual</button></div></label>
+            <label>Fim<div class="time-input"><input id="clip-end" type="text" inputmode="decimal" placeholder="00:00:00"><button id="capture-end" type="button">Pegar tempo atual</button></div></label>
+          </div>
+          <p id="edit-error" class="form-error" role="alert"></p>
+        </section>
+        </details>
+
+        <section class="export-panel">
+          <div class="panel-heading"><div><p class="kicker">Destino dos arquivos</p><h2>Exportar clipes</h2></div><span id="export-count" class="count-pill">0 clipes</span></div>
+          <div class="export-options">
+            <label class="toggle-row"><input id="flat-output" type="checkbox"><span>Salvar tudo em uma pasta</span></label>
+            <label id="folder-field">Nome da pasta<input id="output-folder" type="text" value="ds1_videos" autocomplete="off"></label>
+            <label>Downloads paralelos<input id="parallel-count" type="number" min="1" max="16" value="4"></label>
+          </div>
+          <p class="hint">O script usa <code>yt-dlp</code> e <code>ffmpeg</code>. Para rodar no terminal: <code>bash download-clips.sh</code>. Os arquivos já existentes são ignorados.</p>
+          <div class="download-buttons"><button id="download-sh" type="button">Baixar .sh</button><button id="download-bat" type="button">Baixar .bat</button></div>
+        </section>
+      </div>
+
+      <aside class="queue-panel">
+        <div class="queue-header"><div><p class="kicker">Fila de reprodução</p><h2>Clipes importados</h2></div><span id="queue-count" class="count-pill">0</span></div>
+        <label id="autoplay-row" class="toggle-row" hidden><input id="auto-next" type="checkbox"><span>Passar para o próximo corte ao terminar</span></label>
+        <ol id="clip-queue" class="clip-queue"></ol>
+      </aside>
+    </section>
+  </main>
+  <script src="https://www.youtube.com/iframe_api"></script>
+  <script src="assets/scripts.js"></script>
+  <script src="assets/app.js"></script>
+</body>
+</html>
